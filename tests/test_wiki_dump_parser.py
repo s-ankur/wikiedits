@@ -1,11 +1,11 @@
-import unittest
-import os
 import gzip
+import os
+import unittest
+
 from wikiedits.wiki.wiki_dump_parser import WikiDumpParser
 
 
 class WikiDumpParserTest(unittest.TestCase):
-
     WIKI_TEMP_FILE = "enwiki.temp.xml"
 
     def setUp(self):
@@ -14,7 +14,7 @@ class WikiDumpParserTest(unittest.TestCase):
                                  "enwiki-20140102.tiny.xml.gz")
 
         dump = gzip.open(file_name, "rb")
-        with open(self.WIKI_TEMP_FILE, "w") as file:
+        with open(self.WIKI_TEMP_FILE, "wb") as file:
             file.write(dump.read())
         dump.close()
 
@@ -35,6 +35,7 @@ class WikiDumpParserTest(unittest.TestCase):
 
 def main():
     unittest.main()
+
 
 if __name__ == '__main__':
     main()

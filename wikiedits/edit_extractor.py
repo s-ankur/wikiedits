@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 from wikiedits.diff_finder import DiffFinder
 from wikiedits.edit_filter import EditFilter
 
+log = logging.getLogger(__name__)
 
-class EditExtractor(object):
+
+class EditExtractor:
 
     def __init__(self, **kwargs):
         self.diff = DiffFinder()
@@ -17,6 +21,7 @@ class EditExtractor(object):
         # have been returned.
         try:
             return [edit for frag_pair in frags
-                         for edit in self.filter.filter_edits(*frag_pair)]
-        except:
+                    for edit in self.filter.filter_edits(*frag_pair)]
+        except Exception as e:
+            log.error("Error in EditExtractor:", str(e))
             return []

@@ -1,3 +1,6 @@
+# Pycharm
+.idea
+
 # Linux files
 *~
 *.swp
@@ -35,3 +38,7 @@ pip-delete-this-directory.txt
 .cache
 nosetests.xml
 coverage.xml
+
+*.edits
+*.7z
+*log

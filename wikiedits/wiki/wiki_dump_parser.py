@@ -1,29 +1,48 @@
 # -*- coding: utf-8 -*-
-
-from lxml import etree
+import re
 import sys
 
-class WikiDumpParser(object):
+from lxml import etree
+
+from wikiedits.wiki import WikiExtractor
+
+HTML_TAG_REGEX = r'<[^>]{1,20}?>'
+
+
+class WikiDumpParser:
 
     def __init__(self, filename):
         self.context = etree.iterparse(filename)
         self.important_tags = ['id', 'timestamp', 'comment', 'text', 'title']
 
-    def page_iter(self):
-        pass
+    def clean_rev_iter(self):
+        for revision in self.rev_iter():
+            if revision['text'] is None:
+                continue
+            revision['text'] = self.clean_markups(revision['text'])
+            yield revision
+
+    def clean_markups(self, text):
+        clean_text = WikiExtractor.clean(text)
+        tmp = re.sub("http[^\s]+","",clean_text)
+
+        clean_frags = WikiExtractor.compact(clean_text)
+        clean_html = [frag
+                      for frag in clean_frags]
+        return "\n".join(clean_html) if len(clean_html) > 0 else ""
 
     def rev_iter(self):
         revision, page, contributor = {}, {}, {}
 
         for elem in self.__fast_iter():
             tag = self.__extract_tag(elem)
-
+            #  print(tag)
             if tag == 'id':
-                if 'id' not in page: # page id
+                if 'id' not in page:  # page id
                     page['id'] = elem.text
-                elif 'id' not in revision: # revision id
+                elif 'id' not in revision:  # revision id
                     revision['id'] = elem.text
-                else: # user id
+                else:  # user id
                     contributor['id'] = elem.text
 
             elif tag in ['username', 'ip']:
@@ -63,8 +82,8 @@ class WikiDumpParser(object):
                 while elem.getprevious() is not None:
                     del elem.getparent()[0]
         except etree.LxmlError as ex:
-            print >>sys.stderr, "Iteration stopped due to lxml exception: {}" \
-                .format(ex)
+            print("Iteration stopped due to lxml exception: {}"
+                  .format(ex), file=sys.stderr)
         finally:
             del self.context
 

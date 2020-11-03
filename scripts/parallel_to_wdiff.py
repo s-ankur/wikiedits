@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 import sys
 from difflib import SequenceMatcher
 
@@ -17,9 +16,10 @@ def main():
 
         text = wdiff(err.split(), cor.split())
         if text:
-            print text
+            print(text)
         else:
-            print cor
+            print(cor)
+
 
 def wdiff(err_toks, cor_toks):
     result = ''
@@ -40,8 +40,9 @@ def wdiff(err_toks, cor_toks):
 
     return result.strip()
 
+
 if __name__ == '__main__':
     if '-h' in sys.argv or '--help' in sys.argv:
-        print "Example: cat enwiki.xxx.tsv | python {}".format(sys.argv[0])
+        print("Example: cat enwiki.xxx.tsv | python {}".format(sys.argv[0]))
         exit()
     main()
